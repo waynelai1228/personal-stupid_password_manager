@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stupid Password Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <!--name of the application-->
+    <div class="row">
+        <div class="col">
+            <h2 class="text-center">Stupid Password Manager</h2>
+        </div>
+    </div>
+
+    <!--input necessary information to store or decrypt passwords-->
+    <form class="row">
+        <!--input for the name of the service-->
+        <div class="input-group input-group-sm col-lg-2 col-md-12 col-sm-12 mb-2">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Service</span>
+            </div>
+            <input type="text" class="form-control" placeholder="e.g. Gmail">
+        </div>
+
+        <!--input for the password used to encrypt the service password-->
+        <div class="input-group input-group-sm col-lg-5 col-md-6 col-sm-12 mb-2">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Encrypt Password</span>
+            </div>
+            <input type="password" class="form-control" placeholder="password">
+        </div>
+
+        <!--input for the password to be encrypted-->
+        <div class="input-group input-group-sm col-lg-5 col-md-6 col-sm-12 mb-2">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Service Password</span>
+            </div>
+            <input type="password" class="form-control" placeholder="password">
+        </div>
+
+        <!--button for Add or Decrypt operation-->
+        <div class="col-lg-1 col-md-1">
+            <button type="button" class="btn btn-dark mb-3">Add</button>
+        </div>
+        <div class="col-lg-2 col-md-2">
+            <button type="button" class="btn btn-dark mb-3">Decrypt</button>
+        </div>
+    </form>
+
+    <!--displays all the password stored by password manager-->
+    <div class="row">
+        <table class="table table-dark col-12">
+            <thead>
+            <tr>
+                <th>Service</th>
+                <th>Encrypted Password</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Gmail</td>
+                <td>U21hcnRQYXNzd29yZA==</td>
+            </tr>
+            <tr>
+                <td>Facebook</td>
+                <td>V29yc3RDb21wYW55RXZlcg==</td>
+            </tr>
+            <tr>
+                <td>Instagram</td>
+                <td>RnVsbE9mRHVtYlRlZW5hZ2Vycw==</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
