@@ -3,17 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Stupid Password Manager</title>
+
+    <!--Bootstrap and JQuery-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+    <!--Vue.js-->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <!--Crypto.js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.js"></script>
 </head>
 <body>
-<div class="container-fluid">
+<div class="container-fluid" id="app">
     <!--name of the application-->
     <div class="row">
         <div class="col">
-            <h2 class="text-center">Stupid Password Manager</h2>
+            <h2 class="text-center">{{ title }}</h2>
         </div>
     </div>
 
@@ -24,7 +32,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text">Service</span>
             </div>
-            <input type="text" class="form-control" placeholder="e.g. Gmail">
+            <input type="text" class="form-control" placeholder="e.g. Gmail" v-model="service_name">
         </div>
 
         <!--input for the password used to encrypt the service password-->
@@ -32,7 +40,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text">Encrypt Password</span>
             </div>
-            <input type="password" class="form-control" placeholder="password">
+            <input type="password" class="form-control" placeholder="password" v-model="encrypt_password" v-on:keyup="passwordChange">
         </div>
 
         <!--input for the password to be encrypted-->
@@ -40,7 +48,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text">Service Password</span>
             </div>
-            <input type="password" class="form-control" placeholder="password">
+            <input type="password" class="form-control" placeholder="password" v-model="service_password" v-on:keyup="passwordChange">
         </div>
 
         <!--button for Add or Decrypt operation-->
@@ -51,6 +59,24 @@
             <button type="button" class="btn btn-dark mb-3">Decrypt</button>
         </div>
     </form>
+
+    <!--preview of encrypted password-->
+    <div class="row">
+        <table class="table table-dark col-12">
+            <thead>
+            <tr>
+                <th>Service</th>
+                <th>Encrypted Password</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ service_name }}</td>
+                <td>{{ encrypted_password }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
     <!--displays all the password stored by password manager-->
     <div class="row">
@@ -64,7 +90,7 @@
             <tbody>
             <tr>
                 <td>Gmail</td>
-                <td>U21hcnRQYXNzd29yZA==</td>
+                <td>{{ encrypted_password }}</td>
             </tr>
             <tr>
                 <td>Facebook</td>
@@ -78,5 +104,9 @@
         </table>
     </div>
 </div>
+
+<!--Vue js-->
+<script type="module" src="index.js"></script>
+
 </body>
 </html>

@@ -1,0 +1,8 @@
+{
+  "name": "stupid_password_manager",
+  "version": "1.0.0",
+  "dependencies": {
+    "vue": "^2.6.11",
+    "crypto-js": "^4.0.0"
+  }
+}
