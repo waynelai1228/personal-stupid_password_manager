@@ -4,6 +4,15 @@ const StageAreaEnum = Object.freeze({
     DECRYPT_VIEW: 2
 });
 
+function hex2ascii(hexString) {
+    hexString = hexString.toString();
+    let str = '';
+    for (let i = 0; i < hexString.length; i += 2) {
+        str += String.fromCharCode(parseInt(hexString.substr(i, 2), 16));
+    }
+    return str;
+}
+
 const app = new Vue({
     el: '#app',
     data: {
@@ -24,17 +33,14 @@ const app = new Vue({
                 this.stage_area_view = StageAreaEnum.NOTHING;
             }
             if (this.stored_passwords.has(this.service_name.toLowerCase()) && this.encrypt_password != '') {
-                this.stored_passwords.get(this.service_name);
+                const encrypted = this.stored_passwords.get(this.service_name);
+                this.decrypted_password = CryptoJS.AES.decrypt(encrypted, this.encrypt_password);
+                this.decrypted_password = hex2ascii(this.decrypted_password);
+                console.log(this.decrypted_password);
                 this.stage_area_view = StageAreaEnum.DECRYPT_VIEW;
             }
             else if (this.service_name != '' && this.encrypt_password != '' && this.service_password != '') {
-                let salt = CryptoJS.lib.WordArray.random(128/8);
-                let iv = CryptoJS.lib.WordArray.random(128/8);
-                let key512Bits1000Iterations = CryptoJS.PBKDF2("Secret Passphrase", salt, {
-                    keySize: 512 / 32,
-                    iterations: 1000
-                });
-                this.encrypted_password = new EncryptedPasswordAES(salt, iv, CryptoJS.AES.encrypt(this.service_password, key512Bits1000Iterations, {iv: iv})).toString();
+                this.encrypted_password = CryptoJS.AES.encrypt(this.service_password, this.encrypt_password).toString();
                 this.stage_area_view = StageAreaEnum.ADD_PREVIEW;
             }
             else {
@@ -44,7 +50,7 @@ const app = new Vue({
 
         addClicked: function () {
             if (this.stage_area_view == StageAreaEnum.ADD_PREVIEW){
-                this.stored_passwords.set(this.service_name, EncryptedPasswordAES.encryptedPasswordFromString(this.encrypted_password))
+                this.stored_passwords.set(this.service_name, this.encrypted_password)
                 this.service_name = '';
                 this.encrypt_password = '';
                 this.encrypted_password = '';
@@ -55,19 +61,3 @@ const app = new Vue({
     }
 });
 
-class EncryptedPasswordAES {
-    constructor(salt, iv, encrypted_text) {
-        this.salt = salt;
-        this.iv = iv;
-        this.encrypted_text = encrypted_text;
-    }
-
-    toString() {
-        return this.salt + ":" + this.iv + ":" + this.encrypted_text;
-    }
-
-    static encryptedPasswordFromString(encryptedPasswordString){
-        let encryptedPasswordComponents = encryptedPasswordString.split(":");
-        return new EncryptedPasswordAES(encryptedPasswordComponents[0], encryptedPasswordComponents[1], encryptedPasswordComponents[2]);
-    }
-}
