@@ -44,27 +44,28 @@
         </div>
 
         <!--button for Add or Decrypt operation-->
-        <div class="col-lg-1 col-md-1">
+        <div class="btn-group col-1">
             <button type="button" class="btn btn-dark mb-3" :disabled="!(stage_area_view == StageAreaEnum.ADD_PREVIEW)" @click="addClicked">Add</button>
+            <button type="button" class="btn btn-dark mb-3" :disabled="!(stage_area_view == StageAreaEnum.DECRYPT_VIEW || stage_area_view == StageAreaEnum.REMOVE_PREVIEW)" @click="removeClicked">Remove</button>
         </div>
     </form>
 
     <!--preview of encrypted password-->
-    <h4 v-if="stage_area_view == StageAreaEnum.ADD_PREVIEW">Preview</h4>
+    <h4 v-if="stage_area_view == StageAreaEnum.ADD_PREVIEW || stage_area_view == StageAreaEnum.REMOVE_PREVIEW">Preview</h4>
     <h4 v-if="stage_area_view == StageAreaEnum.DECRYPT_VIEW">Decryption</h4>
     <div id="preview" class="row" v-if="stage_area_view">
         <table class="table table-dark col-12">
             <thead>
             <tr>
                 <th>Service</th>
-                <th v-if="stage_area_view == StageAreaEnum.ADD_PREVIEW">Encrypted Password</th>
+                <th v-if="stage_area_view == StageAreaEnum.ADD_PREVIEW || stage_area_view == StageAreaEnum.REMOVE_PREVIEW">Encrypted Password</th>
                 <th v-if="stage_area_view == StageAreaEnum.DECRYPT_VIEW">Decrypted Password</th>
             </tr>
             </thead>
             <tbody>
             <tr>
                 <td>{{ service_name }}</td>
-                <td v-if="stage_area_view == StageAreaEnum.ADD_PREVIEW">{{ encrypted_password }}</td>
+                <td v-if="stage_area_view == StageAreaEnum.ADD_PREVIEW || stage_area_view == StageAreaEnum.REMOVE_PREVIEW">{{ encrypted_password }}</td>
                 <td v-if="stage_area_view == StageAreaEnum.DECRYPT_VIEW">{{ decrypted_password }}</td>
             </tr>
             </tbody>
@@ -102,7 +103,8 @@
     const StageAreaEnum = Object.freeze({
         NOTHING: 0,
         ADD_PREVIEW: 1,
-        DECRYPT_VIEW: 2
+        DECRYPT_VIEW: 2,
+        REMOVE_PREVIEW: 3
     });
 
     function hex2ascii(hexString) {
@@ -130,10 +132,14 @@
         },
         methods: {
             inputChange: function() {
-                if (this.service_name == '' || this.encrypt_password == '') {
+                if (this.service_name == '') {
                     this.stage_area_view = StageAreaEnum.NOTHING;
                 }
-                if (this.stored_passwords.has(this.service_name.toLowerCase()) && this.encrypt_password != '') {
+                else if (this.stored_passwords.has(this.service_name) && this.encrypt_password == '') {
+                    this.encrypted_password = this.stored_passwords.get(this.service_name);
+                    this.stage_area_view = StageAreaEnum.REMOVE_PREVIEW;
+                }
+                else if (this.stored_passwords.has(this.service_name) && this.encrypt_password != '') {
                     const encrypted = this.stored_passwords.get(this.service_name);
                     this.decrypted_password = CryptoJS.AES.decrypt(encrypted, this.encrypt_password);
                     this.decrypted_password = hex2ascii(this.decrypted_password);
@@ -149,14 +155,26 @@
             },
 
             addClicked: function () {
-                if (this.stage_area_view == StageAreaEnum.ADD_PREVIEW){
+                if (this.stage_area_view == StageAreaEnum.ADD_PREVIEW) {
                     this.stored_passwords.set(this.service_name, this.encrypted_password)
-                    this.service_name = '';
-                    this.encrypt_password = '';
-                    this.encrypted_password = '';
-                    this.service_password = '';
-                    this.stage_area_view = StageAreaEnum.NOTHING
+                    this.clearFields();
                 }
+            },
+
+            removeClicked: function() {
+                if (this.stage_area_view == StageAreaEnum.DECRYPT_VIEW || this.stage_area_view == StageAreaEnum.REMOVE_PREVIEW) {
+                    this.stored_passwords.delete(this.service_name);
+                    this.clearFields();
+                }
+            },
+
+            clearFields: function() {
+                this.service_name = '';
+                this.encrypt_password = '';
+                this.service_password = '';
+                this.encrypt_password = '';
+                this.decrypted_password = '';
+                this.stage_area_view = StageAreaEnum.NOTHING;
             }
         }
     });
