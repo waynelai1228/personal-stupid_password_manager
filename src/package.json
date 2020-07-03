@@ -1,8 +1,12 @@
 {
   "name": "stupid_password_manager",
   "version": "1.0.0",
-  "dependencies": {
-    "vue": "^2.6.11",
-    "crypto-js": "^4.0.0"
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^9.0.5",
+    "jquery": "^3.5.1"
   }
 }
