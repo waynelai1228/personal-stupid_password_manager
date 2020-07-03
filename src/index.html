@@ -4,9 +4,29 @@
     <meta charset="UTF-8">
     <title>Stupid Password Manager</title>
 
+    <meta http-equiv="Content-Security-Policy" content="
+    script-src 'self' 'unsafe-eval' 'sha256-SQYlLqhQN5V76Pldan1J+VXhDPKQS7MpkmrTk1mJ5XQ='
+    https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js
+    https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css
+    https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js
+    https://cdn.jsdelivr.net/npm/vue/dist/vue.js
+    https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.js">
+
     <!--Bootstrap and JQuery-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script>
+        window.jQuery = window.$ = require('jquery');
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+    <!--Vue.js-->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!--Crypto.js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.js"></script>
+    <!--Javascript file-->
+    <script defer src="./render.js"></script>
 </head>
 <body>
 <div class="container-fluid" id="app">
@@ -45,8 +65,10 @@
 
         <!--button for Add or Decrypt operation-->
         <div class="btn-group col-1">
-            <button type="button" class="btn btn-dark mb-3" :disabled="!(stage_area_view == StageAreaEnum.ADD_PREVIEW)" @click="addClicked">Add</button>
-            <button type="button" class="btn btn-dark mb-3" :disabled="!(stage_area_view == StageAreaEnum.DECRYPT_VIEW || stage_area_view == StageAreaEnum.REMOVE_PREVIEW)" @click="removeClicked">Remove</button>
+            <button type="button" class="btn btn-dark" :disabled="!(stage_area_view == StageAreaEnum.ADD_PREVIEW)" @click="addClicked">Add</button>
+            <button type="button" class="btn btn-dark" :disabled="!(stage_area_view == StageAreaEnum.DECRYPT_VIEW || stage_area_view == StageAreaEnum.REMOVE_PREVIEW)" @click="removeClicked">Remove</button>
+            <button type="button" class="btn btn-dark" :disabled="Object.keys(stored_passwords).length == 0" @click="saveClicked">Save</button>
+            <button type="button" class="btn btn-dark" :disabled="Object.keys(stored_passwords).length > 0" @click="importClicked">Import</button>
         </div>
     </form>
 
@@ -83,103 +105,13 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="service in stored_passwords.keys()">
+            <tr v-for="service in Object.keys(stored_passwords)">
                 <td>{{ service }}</td>
-                <td>{{ stored_passwords.get(service).toString() }}</td>
+                <td>{{ stored_passwords[service] }}</td>
             </tr>
             </tbody>
         </table>
     </div>
 </div>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-<!--Vue.js-->
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<!--Crypto.js-->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.js"></script>
-<!--Javascript file-->
-<script>
-    const StageAreaEnum = Object.freeze({
-        NOTHING: 0,
-        ADD_PREVIEW: 1,
-        DECRYPT_VIEW: 2,
-        REMOVE_PREVIEW: 3
-    });
-
-    function hex2ascii(hexString) {
-        hexString = hexString.toString();
-        let str = '';
-        for (let i = 0; i < hexString.length; i += 2) {
-            str += String.fromCharCode(parseInt(hexString.substr(i, 2), 16));
-        }
-        return str;
-    }
-
-    const app = new Vue({
-        el: '#app',
-        data: {
-            title: 'Stupid Password Manager',
-            service_name: '',
-            encrypt_password: '',
-            service_password: '',
-            encrypted_password: '',
-            decrypted_password: '',
-            stored_passwords: new Map(),
-
-            StageAreaEnum: StageAreaEnum,
-            stage_area_view: StageAreaEnum.NOTHING
-        },
-        methods: {
-            inputChange: function() {
-                if (this.service_name == '') {
-                    this.stage_area_view = StageAreaEnum.NOTHING;
-                }
-                else if (this.stored_passwords.has(this.service_name) && this.encrypt_password == '') {
-                    this.encrypted_password = this.stored_passwords.get(this.service_name);
-                    this.stage_area_view = StageAreaEnum.REMOVE_PREVIEW;
-                }
-                else if (this.stored_passwords.has(this.service_name) && this.encrypt_password != '') {
-                    const encrypted = this.stored_passwords.get(this.service_name);
-                    this.decrypted_password = CryptoJS.AES.decrypt(encrypted, this.encrypt_password);
-                    this.decrypted_password = hex2ascii(this.decrypted_password);
-                    this.stage_area_view = StageAreaEnum.DECRYPT_VIEW;
-                }
-                else if (this.service_name != '' && this.encrypt_password != '' && this.service_password != '') {
-                    this.encrypted_password = CryptoJS.AES.encrypt(this.service_password, this.encrypt_password).toString();
-                    this.stage_area_view = StageAreaEnum.ADD_PREVIEW;
-                }
-                else {
-                    this.stage_area_view = StageAreaEnum.NOTHING;
-                }
-            },
-
-            addClicked: function () {
-                if (this.stage_area_view == StageAreaEnum.ADD_PREVIEW) {
-                    this.stored_passwords.set(this.service_name, this.encrypted_password)
-                    this.clearFields();
-                }
-            },
-
-            removeClicked: function() {
-                if (this.stage_area_view == StageAreaEnum.DECRYPT_VIEW || this.stage_area_view == StageAreaEnum.REMOVE_PREVIEW) {
-                    this.stored_passwords.delete(this.service_name);
-                    this.clearFields();
-                }
-            },
-
-            clearFields: function() {
-                this.service_name = '';
-                this.encrypt_password = '';
-                this.service_password = '';
-                this.encrypt_password = '';
-                this.decrypted_password = '';
-                this.stage_area_view = StageAreaEnum.NOTHING;
-            }
-        }
-    });
-
-</script>
-
 </body>
 </html>
