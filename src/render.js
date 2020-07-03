@@ -93,7 +93,30 @@ const app = new Vue({
                 defaultPath: "password-" + currentDate() + ".json"
             });
 
-            fs.writeFileSync(filePath, passwordData);
+            fs.writeFile(filePath, passwordData, () => console.log("file saved at " + filePath));
+        },
+
+        importClicked: function() {
+            const filePath = dialog.showOpenDialogSync({
+                buttonLabel: "Select file",
+                filters: [
+                    {name: "JSON files", extensions: ["json"]}
+                ],
+                properties: ["openFile"]
+            });
+
+            fs.readFile(filePath[0], (err, file_json) => {
+                if (err) {
+                    console.log("error from opening file: " + err);
+                    return;
+                }
+                try {
+                    this.stored_passwords = JSON.parse(file_json);
+                }
+                catch (err) {
+                    console.log("error from parsing: " + err);
+                }
+            });
         }
     }
 });
