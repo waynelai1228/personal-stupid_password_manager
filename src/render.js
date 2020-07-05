@@ -22,7 +22,7 @@ function currentDate() {
     let dd = String(today.getDate()).padStart(2, '0');
     let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     let yyyy = today.getFullYear();
-    return today = dd + "_" + mm + "_" + yyyy;
+    return dd + "_" + mm + "_" + yyyy;
 }
 
 const app = new Vue({
