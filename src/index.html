@@ -63,6 +63,11 @@
             <input type="password" class="form-control" placeholder="password" v-model="service_password" v-on:keyup="inputChange">
         </div>
 
+        <div class="alert alert-warning alert-dismissible fade show col-12" v-if="service_name == 'hasOwnProperty'">
+            <strong>Warning!</strong> hasOwnProperty is designed to be an invalid service name.
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+
         <!--button for Add or Decrypt operation-->
         <div class="btn-group col-1">
             <button type="button" class="btn btn-dark" :disabled="!(stage_area_view == StageAreaEnum.ADD_PREVIEW)" @click="addClicked">Add</button>

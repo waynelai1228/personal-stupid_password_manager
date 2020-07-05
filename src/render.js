@@ -41,7 +41,7 @@ const app = new Vue({
     },
     methods: {
         inputChange: function() {
-            if (this.service_name == '') {
+            if (this.service_name == '' || this.service_name == 'hasOwnProperty') {
                 this.stage_area_view = StageAreaEnum.NOTHING;
             }
             else if (this.stored_passwords.hasOwnProperty(this.service_name) && this.encrypt_password == '') {
