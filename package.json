@@ -2,7 +2,7 @@
   "name": "stupid_password_manager",
   "description": "A very simple password manager",
   "author": "Wayne Lai; waynelai1228@github",
-  "version": "1.0.2",
+  "version": "1.1.2",
   "main": "src/main.js",
   "scripts": {
     "start": "node_modules/.bin/electron-forge start",
