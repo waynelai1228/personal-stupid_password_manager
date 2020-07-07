@@ -72,6 +72,7 @@
         <div class="btn-group col-1 mb-3">
             <button type="button" class="btn btn-dark" :disabled="!(stage_area_view == StageAreaEnum.ADD_PREVIEW)" @click="addClicked">Add</button>
             <button type="button" class="btn btn-dark" :disabled="!(stage_area_view == StageAreaEnum.DECRYPT_VIEW || stage_area_view == StageAreaEnum.REMOVE_PREVIEW)" @click="removeClicked">Remove</button>
+            <button type="button" class="btn btn-dark" :disabled="Object.keys(stored_passwords).length == 0" @click="clearClicked">Clear</button>
             <button type="button" class="btn btn-dark" :disabled="Object.keys(stored_passwords).length == 0" @click="saveClicked">Save</button>
             <button type="button" class="btn btn-dark" :disabled="Object.keys(stored_passwords).length > 0" @click="importClicked">Import</button>
         </div>

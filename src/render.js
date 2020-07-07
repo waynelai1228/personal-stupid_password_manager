@@ -77,13 +77,9 @@ const app = new Vue({
             }
         },
 
-        clearFields: function() {
-            this.service_name = '';
-            this.encrypt_password = '';
-            this.service_password = '';
-            this.encrypt_password = '';
-            this.decrypted_password = '';
-            this.stage_area_view = StageAreaEnum.NOTHING;
+        clearClicked: function() {
+            this.stored_passwords = {};
+            this.clearFields();
         },
 
         saveClicked: function() {
@@ -117,6 +113,15 @@ const app = new Vue({
                     console.log("error from parsing: " + err);
                 }
             });
+        },
+
+        clearFields: function() {
+            this.service_name = '';
+            this.encrypt_password = '';
+            this.service_password = '';
+            this.encrypt_password = '';
+            this.decrypted_password = '';
+            this.stage_area_view = StageAreaEnum.NOTHING;
         }
     }
 });
