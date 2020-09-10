@@ -122,6 +122,16 @@ const app = new Vue({
             this.encrypt_password = '';
             this.decrypted_password = '';
             this.stage_area_view = StageAreaEnum.NOTHING;
+        },
+
+        copyPassword: function() {
+            navigator.clipboard.writeText(this.decrypted_password).then(function (e) {
+                console.log("copied");
+                console.log(e);
+            }, function (e) {
+                console.log("cannot copy");
+                console.log(e);
+            });
         }
     }
 });

@@ -23,6 +23,7 @@
 
     <!--Vue.js-->
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+    <script src="dist/vue-clipboard.min.js"></script>
     <!--Crypto.js-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.js"></script>
     <!--Javascript file-->
@@ -98,7 +99,7 @@
             <tr>
                 <td>{{ service_name }}</td>
                 <td v-if="stage_area_view == StageAreaEnum.ADD_PREVIEW || stage_area_view == StageAreaEnum.REMOVE_PREVIEW">{{ encrypted_password }}</td>
-                <td v-if="stage_area_view == StageAreaEnum.DECRYPT_VIEW">{{ decrypted_password }}</td>
+                <td v-if="stage_area_view == StageAreaEnum.DECRYPT_VIEW"><button id="copy_button" type="button" class="btn btn-outline-light" @click="copyPassword">Copy</button></td>
             </tr>
             </tbody>
         </table>
